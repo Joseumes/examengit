@@ -7,85 +7,31 @@ const alumnos = [
   { nombre: 'Mateo', edad: 20, curso: '3º A' }
 ]
 
-const state = {
-  filtro: ''
-}
+let filtro = ''
+const app = document.querySelector('#app')
 
-const getAlumnosFiltrados = () => {
-  const texto = state.filtro.trim().toLowerCase()
-
-  if (!texto) return alumnos
-
-  return alumnos.filter((alumno) =>
-    alumno.nombre.toLowerCase().includes(texto)
+function render() {
+  const lista = alumnos.filter((alumno) =>
+    alumno.nombre.toLowerCase().includes(filtro.toLowerCase())
   )
-}
 
-const renderTabla = () => {
-  const tbody = document.querySelector('.alumnos-tabla tbody')
-
-  if (!tbody) return
-
-  const alumnosFiltrados = getAlumnosFiltrados()
-
-  tbody.innerHTML = alumnosFiltrados.length
-    ? alumnosFiltrados
-        .map(
-          (alumno) => `
-            <tr>
-              <td>${alumno.nombre}</td>
-              <td>${alumno.edad}</td>
-              <td>${alumno.curso}</td>
-            </tr>
-          `
-        )
-        .join('')
-    : '<tr><td colspan="3">No se encontraron alumnos</td></tr>'
-}
-
-const renderApp = () => {
-  document.querySelector('#app').innerHTML = `
+  app.innerHTML = `
     <main class="alumnos-container">
       <header class="topbar">
-        <div class="titulo-wrap">
-          <h1>Listado de alumnos</h1>
-        </div>
-
+        <h1>Listado de alumnos</h1>
         <div class="toolbar">
-          <input
-            id="buscar-alumno"
-            type="search"
-            value="${state.filtro}"
-            placeholder="Buscar por nombre"
-            aria-label="Buscar alumno"
-          />
-          <button id="toggle-form" class="btn-agregar" type="button">Agregar alumno</button>
+          <input id="buscar" type="search" placeholder="Buscar por nombre" value="${filtro}" />
+          <button id="btnAgregar" type="button">Agregar alumno</button>
         </div>
       </header>
 
-      <section id="form-section" class="form-section hidden">
-        <form id="form-alumno" class="alumno-form">
-          <div class="campo">
-            <label for="nombre">Nombre</label>
-            <input id="nombre" name="nombre" type="text" placeholder="Ej: Carlos" required />
-          </div>
-
-          <div class="campo">
-            <label for="edad">Edad</label>
-            <input id="edad" name="edad" type="number" min="1" max="100" placeholder="Ej: 18" required />
-          </div>
-
-          <div class="campo">
-            <label for="curso">Curso</label>
-            <input id="curso" name="curso" type="text" placeholder="Ej: 2º B" required />
-          </div>
-
-          <div class="acciones">
-            <button type="submit" class="btn-guardar">Guardar</button>
-            <button type="button" id="cancelar-form" class="btn-cancelar">Cancelar</button>
-          </div>
-        </form>
-      </section>
+      <form id="formAlumno" class="hidden">
+        <input name="nombre" placeholder="Nombre" required />
+        <input name="edad" type="number" placeholder="Edad" required />
+        <input name="curso" placeholder="Curso" required />
+        <button type="submit">Guardar</button>
+        <button type="button" id="btnCancelar">Cancelar</button>
+      </form>
 
       <table class="alumnos-tabla">
         <thead>
@@ -96,61 +42,60 @@ const renderApp = () => {
           </tr>
         </thead>
         <tbody>
-          ${getAlumnosFiltrados()
-            .map(
-              (alumno) => `
-                <tr>
-                  <td>${alumno.nombre}</td>
-                  <td>${alumno.edad}</td>
-                  <td>${alumno.curso}</td>
-                </tr>
-              `
-            )
-            .join('') || '<tr><td colspan="3">No se encontraron alumnos</td></tr>'}
+          ${
+            lista.length
+              ? lista
+                  .map(
+                    (alumno) => `
+                      <tr>
+                        <td>${alumno.nombre}</td>
+                        <td>${alumno.edad}</td>
+                        <td>${alumno.curso}</td>
+                      </tr>
+                    `
+                  )
+                  .join('')
+              : '<tr><td colspan="3">No hay alumnos</td></tr>'
+          }
         </tbody>
       </table>
     </main>
   `
 
-  const formSection = document.querySelector('#form-section')
-  const toggleFormBtn = document.querySelector('#toggle-form')
-  const cancelarFormBtn = document.querySelector('#cancelar-form')
-  const formAlumno = document.querySelector('#form-alumno')
-  const buscarInput = document.querySelector('#buscar-alumno')
+  const buscar = document.querySelector('#buscar')
+  const btnAgregar = document.querySelector('#btnAgregar')
+  const formAlumno = document.querySelector('#formAlumno')
+  const btnCancelar = document.querySelector('#btnCancelar')
 
-  toggleFormBtn.addEventListener('click', () => {
-    formSection.classList.toggle('hidden')
+  buscar.addEventListener('input', (e) => {
+    filtro = e.target.value
+    render()
   })
 
-  cancelarFormBtn.addEventListener('click', () => {
-    formSection.classList.add('hidden')
+  btnAgregar.addEventListener('click', () => {
+    formAlumno.classList.toggle('hidden')
+  })
+
+  btnCancelar.addEventListener('click', () => {
+    formAlumno.classList.add('hidden')
     formAlumno.reset()
   })
 
-  buscarInput.addEventListener('input', (event) => {
-    state.filtro = event.target.value
-    renderTabla()
-  })
+  formAlumno.addEventListener('submit', (e) => {
+    e.preventDefault()
 
-  formAlumno.addEventListener('submit', (event) => {
-    event.preventDefault()
+    const datos = new FormData(formAlumno)
+    const nombre = datos.get('nombre').trim()
+    const edad = Number(datos.get('edad'))
+    const curso = datos.get('curso').trim()
 
-    const formData = new FormData(formAlumno)
-    const nuevoAlumno = {
-      nombre: formData.get('nombre').trim(),
-      edad: Number(formData.get('edad')),
-      curso: formData.get('curso').trim()
-    }
+    if (!nombre || !curso || Number.isNaN(edad)) return
 
-    if (!nuevoAlumno.nombre || !nuevoAlumno.curso || Number.isNaN(nuevoAlumno.edad)) {
-      return
-    }
-
-    alumnos.push(nuevoAlumno)
+    alumnos.push({ nombre, edad, curso })
     formAlumno.reset()
-    formSection.classList.add('hidden')
-    renderApp()
+    formAlumno.classList.add('hidden')
+    render()
   })
 }
 
-renderApp()
+render()
