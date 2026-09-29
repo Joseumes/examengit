@@ -4,22 +4,105 @@
 :root {
   font-family: Arial, sans-serif;
   color: #000;
-  background: #fff;
+  background: #f5f7fb;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   padding: 20px;
-  background: #fff;
+  background: #f5f7fb;
 }
 
 #app {
   width: 100%;
 }
 
+.alumnos-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
 h1 {
-  margin: 0 0 16px;
+  margin: 0;
   font-size: 24px;
+}
+
+.btn-agregar,
+.btn-guardar,
+.btn-cancelar {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-agregar,
+.btn-guardar {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-cancelar {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.form-section {
+  margin-bottom: 20px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.hidden {
+  display: none;
+}
+
+.alumno-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo label {
+  font-weight: 600;
+}
+
+.campo input {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.acciones {
+  display: flex;
+  gap: 10px;
 }
 
 .alumnos-tabla {
@@ -29,11 +112,15 @@ h1 {
 
 .alumnos-tabla th,
 .alumnos-tabla td {
-  border: 1px solid #000;
-  padding: 8px;
+  border: 1px solid #dbe3ec;
+  padding: 10px 12px;
   text-align: left;
 }
 
 .alumnos-tabla th {
-  background: #fff;
+  background: #eff6ff;
+}
+
+.alumnos-tabla tr:nth-child(even) td {
+  background: #f8fafc;
 }
